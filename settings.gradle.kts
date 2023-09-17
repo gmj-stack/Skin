@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "SkinDemo"
 include(":app")
 include(":skin")
+include(":skinapk")

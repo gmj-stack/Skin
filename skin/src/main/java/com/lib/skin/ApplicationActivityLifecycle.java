@@ -12,13 +12,18 @@ import androidx.core.view.LayoutInflaterCompat;
 import java.lang.reflect.Field;
 import java.util.Observable;
 
+/**
+ * @author gmj
+ * 监听生命周期，替换我们自己的布局加载器
+ */
 public class ApplicationActivityLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Observable mObserable;
     private ArrayMap<Activity, SkinLayoutInflaterFactory> mLayoutInflaterFactories = new ArrayMap<>();
     private SkinLayoutInflaterFactory skinLayoutInflaterFactory;
 
-    public ApplicationActivityLifecycle(Observable observable) {
+    public
+    ApplicationActivityLifecycle(Observable observable) {
         mObserable = observable;
     }
 

@@ -22,6 +22,9 @@ import java.util.WeakHashMap;
 
 /**
  * 这里面放了所有要换肤的view所对应的属性
+ * 可以自己根据自己项目增加
+ *
+ * @author gmj
  */
 public class SkinAttribute {
     private static List<String> mAttributes = new ArrayList<>();
@@ -35,10 +38,12 @@ public class SkinAttribute {
         mAttributes.add("drawableTop");
         mAttributes.add("drawableRight");
         mAttributes.add("drawableBottom");
+        mAttributes.add("textSize");
     }
 
     /**
      * 记录换肤需要操作的View与属性信息
+     * 采用WeakHashMap是为了处理内存泄漏问题
      */
     private WeakHashMap<View, HashMap<String, Integer>> mSkinAttrMap = new WeakHashMap<>();
 
@@ -47,7 +52,7 @@ public class SkinAttribute {
      */
     public void look(View view, AttributeSet attrs) {
         // 用来存储view的属性值和属性名称
-        HashMap<String, Integer> stringSkinPairHashMap = new HashMap<>();
+        HashMap<String, Integer> stringSkinPairHashMap = new HashMap<>(10);
 
         for (int i = 0; i < attrs.getAttributeCount(); i++) {
             // 获得属性名  textColor/background
@@ -66,7 +71,7 @@ public class SkinAttribute {
                 // 以 ？开头的表示使用 属性
                 if (attributeValue.startsWith("?")) {
                     int attrId = Integer.parseInt(attributeValue.substring(1));
-                    resId = SkinThemeUtils.getResId(view.getContext(), new int[] {attrId})[0];
+                    resId = SkinThemeUtils.getResId(view.getContext(), new int[]{attrId})[0];
                 } else {
                     // 正常以 @ 开头
                     resId = Integer.parseInt(attributeValue.substring(1));
@@ -90,7 +95,7 @@ public class SkinAttribute {
     }
 
     /**
-     *   停留当前界面 执行了换肤操作 对所有的view中的所有的属性进行修改
+     * 停留当前界面 执行了换肤操作 对所有的view中的所有的属性进行修改
      */
     public void applySkin() {
 
@@ -124,41 +129,44 @@ public class SkinAttribute {
         Drawable right = null;
         Drawable bottom = null;
         switch (attributeName) {
-        case "background":
-            Object background = SkinResources.getInstance().getBackground(resId);
-            // 背景可能是 @color 也可能是 @drawable
-            if (background instanceof Integer) {
-                view.setBackgroundColor((int) background);
-            } else {
-                ViewCompat.setBackground(view, (Drawable) background);
-            }
-            break;
-        case "src":
-        case "srcCompat":
-            background = SkinResources.getInstance().getBackground(resId);
-            if (background instanceof Integer) {
-                ((ImageView) view).setImageDrawable(new ColorDrawable((Integer) background));
-            } else {
-                ((ImageView) view).setImageDrawable((Drawable) background);
-            }
-            break;
-        case "textColor":
-            ((TextView) view).setTextColor(SkinResources.getInstance().getColorStateList(resId));
-            break;
-        case "drawableLeft":
-            left = SkinResources.getInstance().getDrawable(resId);
-            break;
-        case "drawableTop":
-            top = SkinResources.getInstance().getDrawable(resId);
-            break;
-        case "drawableRight":
-            right = SkinResources.getInstance().getDrawable(resId);
-            break;
-        case "drawableBottom":
-            bottom = SkinResources.getInstance().getDrawable(resId);
-            break;
-        default:
-            break;
+            case "background":
+                Object background = SkinResources.getInstance().getBackground(resId);
+                // 背景可能是 @color 也可能是 @drawable
+                if (background instanceof Integer) {
+                    view.setBackgroundColor((int) background);
+                } else {
+                    ViewCompat.setBackground(view, (Drawable) background);
+                }
+                break;
+            case "src":
+            case "srcCompat":
+                background = SkinResources.getInstance().getBackground(resId);
+                if (background instanceof Integer) {
+                    ((ImageView) view).setImageDrawable(new ColorDrawable((Integer) background));
+                } else {
+                    ((ImageView) view).setImageDrawable((Drawable) background);
+                }
+                break;
+            case "textColor":
+                ((TextView) view).setTextColor(SkinResources.getInstance().getColorStateList(resId));
+                break;
+            case "drawableLeft":
+                left = SkinResources.getInstance().getDrawable(resId);
+                break;
+            case "drawableTop":
+                top = SkinResources.getInstance().getDrawable(resId);
+                break;
+            case "drawableRight":
+                right = SkinResources.getInstance().getDrawable(resId);
+                break;
+            case "drawableBottom":
+                bottom = SkinResources.getInstance().getDrawable(resId);
+                break;
+            case "textSize":
+                ((TextView) view).setTextSize(SkinResources.getInstance().getSize(resId));
+                break;
+            default:
+                break;
         }
         if (null != left || null != right || null != top || null != bottom) {
             ((TextView) view).setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);

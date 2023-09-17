@@ -2,17 +2,20 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
-
+// 打包的路径
+val outputPathName = "../../SkinDemo/app/src/main/assets/skinapk"
 android {
-    namespace = "com.example.skindemo"
+    namespace = "com.example.skinapk"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.skindemo"
+        applicationId = "com.example.skinapk"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -30,9 +33,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    dataBinding {
-        enable = true
+    // 报错不用管，api过时了不影响打包
+    applicationVariants.all {
+        outputs.all {
+            packageApplication.outputDirectory.set(File("$outputPathName"))
+
+        }
     }
+
 }
 
 dependencies {
@@ -40,9 +48,5 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation(project(mapOf("path" to ":skin")))
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
 }

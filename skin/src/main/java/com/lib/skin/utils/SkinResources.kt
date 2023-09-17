@@ -5,15 +5,24 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
+import androidx.core.content.res.ResourcesCompat
 
+/**
+ * 获取属性值
+ * 加载属性值使用此类
+ */
 class SkinResources private constructor(context: Context) {
     private var mSkinPkgName: String? = null
     private var isDefaultSkin = true
 
-    // app原始的resource
+    /**
+     * app的原始resource
+     */
     private val mAppResources: Resources
 
-    // 皮肤包的resource
+    /**
+     * 皮肤包的resource
+     */
     private var mSkinResources: Resources? = null
 
     init {
@@ -29,7 +38,7 @@ class SkinResources private constructor(context: Context) {
     fun applySkin(resources: Resources?, pkgName: String?) {
         mSkinResources = resources
         mSkinPkgName = pkgName
-        //是否使用默认皮肤
+        // 是否使用默认皮肤
         isDefaultSkin = TextUtils.isEmpty(pkgName) || resources == null
     }
 
@@ -49,16 +58,15 @@ class SkinResources private constructor(context: Context) {
     /**
      * 输入主APP的ID，到皮肤APK文件中去找到对应ID的颜色值
      * @param resId
-     * @return
      */
     fun getColor(resId: Int): Int {
         if (isDefaultSkin) {
-            return mAppResources.getColor(resId)
+            return mAppResources.getColor(resId, null)
         }
         val skinId = getIdentifier(resId)
         return if (skinId == 0) {
-            mAppResources.getColor(resId)
-        } else mSkinResources!!.getColor(skinId)
+            mAppResources.getColor(resId, null)
+        } else mSkinResources!!.getColor(skinId, null)
     }
 
     /**
@@ -77,30 +85,29 @@ class SkinResources private constructor(context: Context) {
 
     fun getColorStateList(resId: Int): ColorStateList {
         if (isDefaultSkin) {
-            return mAppResources.getColorStateList(resId)
+            return mAppResources.getColorStateList(resId, null)
         }
         val skinId = getIdentifier(resId)
         return if (skinId == 0) {
-            mAppResources.getColorStateList(resId)
-        } else mSkinResources!!.getColorStateList(skinId)
+            mAppResources.getColorStateList(resId, null)
+        } else mSkinResources!!.getColorStateList(skinId, null)
     }
 
     fun getDrawable(resId: Int): Drawable {
         if (isDefaultSkin) {
-            return mAppResources.getDrawable(resId,null)
+            return ResourcesCompat.getDrawable(mAppResources, resId, null)!!
         }
-        //通过 app的resource 获取id 对应的 资源名 与 资源类型
-        //找到 皮肤包 匹配 的 资源名资源类型 的 皮肤包的 资源 ID
+        // 通过 app的resource 获取id 对应的 资源名 与 资源类型
+        // 找到 皮肤包 匹配 的 资源名资源类型 的 皮肤包的 资源 ID
         val skinId = getIdentifier(resId)
         return if (skinId == 0) {
-            mAppResources.getDrawable(resId,null)
-        } else mSkinResources!!.getDrawable(skinId,null)
+            ResourcesCompat.getDrawable(mAppResources, resId, null)!!
+        } else ResourcesCompat.getDrawable(mSkinResources!!, resId, null)!!
     }
 
     /**
      * 可能是Color 也可能是drawable
      *
-     * @return
      */
     fun getBackground(resId: Int): Any {
         val resourceTypeName = mAppResources.getResourceTypeName(resId)
@@ -113,7 +120,7 @@ class SkinResources private constructor(context: Context) {
     }
 
     companion object {
-        //单例
+        // 单例
         @JvmStatic
         @Volatile
         var instance: SkinResources? = null

@@ -15,14 +15,14 @@ class SkinManager private constructor(private val mContext: Application) : Obser
     private val skinActivityLifecycle: ApplicationActivityLifecycle
 
     init {
-        //共享首选项 用于记录当前使用的皮肤
+        // 共享首选项 用于记录当前使用的皮肤
         SkinPreference.init(mContext)
-        //资源管理类 用于从 app/皮肤 中加载资源
+        // 资源管理类 用于从 app/皮肤 中加载资源
         SkinResources.init(mContext)
-        //注册Activity生命周期,并设置被观察者
+        // 注册Activity生命周期,并设置被观察者
         skinActivityLifecycle = ApplicationActivityLifecycle(this)
         mContext.registerActivityLifecycleCallbacks(skinActivityLifecycle)
-        //加载上次使用保存的皮肤
+        // 加载上次使用保存的皮肤
         loadSkin(SkinPreference.instance!!.skin)
     }
 
